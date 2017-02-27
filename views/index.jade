@@ -1,5 +1,36 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+
+  h1 Library Manager
+  p Welcome to Library Manager
+  ul
+    li
+      | Books
+      ul
+        li
+          a(href='/book/new') New Book
+        li
+          a(href='/book/all') List All
+        li
+          a(href='/book/overdue') List Overdue
+        li
+          a(href='/book/checked') List Checked Out
+    li
+      | Patrons
+      ul
+        li
+          a(href='/patron/new') New Patron
+        li
+          a(href='/patron/all') List All
+    li
+      | Loans
+      ul
+        li
+          a(href='/loan/new') New Loan
+        li
+          a(href='loan/all') List All
+        li
+          a(href='loan/overdue') List Overdue
+        li
+          a(href='loan/checked') List Checked Out

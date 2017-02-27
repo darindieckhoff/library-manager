@@ -1,7 +1,10 @@
 doctype html
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+html(lang='en')
+
+  include ./partials/_head.jade
+
+  include ./partials/_nav-bar.jade
+
   body
     block content
+    //scripts

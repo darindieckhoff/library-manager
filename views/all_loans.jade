@@ -1,0 +1,32 @@
+extends layout
+
+block content
+
+    h1 Loans
+    p
+      a.button(href='new_loan.html') Create New Loan
+
+    include ./partials/_filters.jade
+    
+    table
+      thead
+        tr
+          th Book
+          th Patron 
+          th Loaned on
+          th Return by 
+          th Returned on
+          th Action
+      tbody
+        each loan in loans
+          tr
+            td
+              a(href='book_detail.html') #{loan.book_id}
+            td
+              a(href='patron_detail.html') 
+            td #{loan.loaned_on}
+            td #{loan.return_by}
+            td #{loan.returned_on}
+            td
+              a.button(href='return_book.html') Return Book
+          
