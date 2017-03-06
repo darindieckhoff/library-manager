@@ -4,10 +4,16 @@ block content
 
     h1 Loans
     p
-      a.button(href='new_loan.html') Create New Loan
+      a.button(href='/loan/new') Create New Loan
 
-    include ./partials/_filters.jade
-    
+    p
+      | Filters 
+      a(href='/loan/all') All
+      |  
+      a(href='/loan/overdue') Overdue
+      |  
+      a(href='/loan/checked') Checked Out
+
     table
       thead
         tr
@@ -21,12 +27,12 @@ block content
         each loan in loans
           tr
             td
-              a(href='book_detail.html') #{loan.book_id}
+              a(href='/book/' + loan.Book.id) #{loan.Book.title}
             td
-              a(href='patron_detail.html') 
+              a(href='/patron/' + loan.Patron.id) #{loan.Patron.first_name} #{loan.Patron.last_name}
             td #{loan.loaned_on}
             td #{loan.return_by}
             td #{loan.returned_on}
             td
-              a.button(href='return_book.html') Return Book
+              a.button(href='/return/' + loan.Book.id) Return Book
           

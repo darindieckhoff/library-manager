@@ -2,7 +2,7 @@ extends layout
 
 block content
 
-    h1 Book: A Brief History of Time
+    h1 Book: #{book.title}
     form
       p
         label(for='title') Title
@@ -28,14 +28,15 @@ block content
           th Return by 
           th Returned on
           th Action
-      tbody
-        tr
-          td
-            a(href='book_detail.html') #{book.title}
-          td
-            a(href='patron_detail.html') Andrew Chalkley
-          td 2015-12-12
-          td 2015-12-19
-          td
-          td
-            a.button(href='return_book.html') Return Book
+      if book.Loan
+        tbody
+          tr
+            td
+              a(href='/book/' + book.id) #{book.title}
+            td
+              a(href='/patron/' + book.Loan.Patron.id) #{book.Loan.Patron.first_name} #{book.Loan.Patron.last_name}
+            td #{book.Loan.loaned_on}
+            td #{book.Loan.return_by}
+            td #{book.Loan.returned_on}
+            td
+              a.button(href='/return/' + book.id) Return Book

@@ -6,8 +6,16 @@ module.exports = function(sequelize, DataTypes) {
     author: DataTypes.STRING,
     genre: DataTypes.STRING,
     first_published: DataTypes.INTEGER
-  }, {
-    timestamps: false
+  }, 
+  {
+    timestamps: false,
+    underscored: true,
+    classMethods: {
+      associate: function(models) {
+        // associations can be defined here
+        Book.hasOne(models.Loan);
+      }
+    }
   });
   return Book;
 };

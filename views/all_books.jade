@@ -4,9 +4,15 @@ block content
 
     h1 Books
     p
-      a.button(href='book/new') Create New Book
+      a.button(href='/book/new') Create New Book
 
-    include ./partials/_filters.jade
+    p
+      | Filters 
+      a(href='/book/all') All
+      |  
+      a(href='/book/overdue') Overdue
+      |  
+      a(href='/book/checked') Checked Out
 
     table
       thead

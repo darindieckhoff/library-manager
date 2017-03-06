@@ -8,8 +8,16 @@ module.exports = function(sequelize, DataTypes) {
     email: DataTypes.STRING,
     library_id: DataTypes.STRING,
     zip_code: DataTypes.INTEGER
-  }, {
-    timestamps: false
+  }, 
+  {
+    timestamps: false,
+    underscored: true,
+    classMethods: {
+      associate: function(models) {
+        // associations can be defined here
+        Patron.hasMany(models.Loan);
+      }
+    }
   });
   return Patron;
 };

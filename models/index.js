@@ -33,4 +33,15 @@ Object.keys(db).forEach(function(modelName) {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+// //Models/tables
+// db.book = require('../models/book.js')(sequelize, Sequelize);  
+// db.loan = require('../models/loan.js')(sequelize, Sequelize);  
+// db.patron = require('../models/patron.js')(sequelize, Sequelize);
+
+// //Relations
+// db.comments.belongsTo(db.posts);  
+// db.posts.hasMany(db.comments);  
+// db.posts.belongsTo(db.users);  
+// db.users.hasMany(db.posts);
+
 module.exports = db;
