@@ -2,12 +2,18 @@ extends layout
 
 block content
 
-    h1 Checked Out Books
+    h1 Loans
     p
       a.button(href='/loan/new') Create New Loan
-    
-    include ./partials/_filters.jade
-    
+
+    p
+      | Filters 
+      a(href='/loan/all') All
+      |  
+      a(href='/loan/overdue') Overdue
+      |  
+      a(href='/loan/checked') Checked Out
+
     table
       thead
         tr
@@ -27,6 +33,7 @@ block content
             td #{loan.loaned_on}
             td #{loan.return_by}
             td #{loan.returned_on}
-            td
-              a.button(href='return_book.html') Return Book
-        
+            if (!loan.returned_on)
+              td
+                a.button(href='/loan/' + loan.id) Return Book
+          

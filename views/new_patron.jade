@@ -3,7 +3,12 @@ extends layout
 block content
 
     h1 New Patron
-    form(id='newPatron' action='/patron/new', method='post')
+    form(id="newPatron", action="/patron/new", method="post")
+      if (errors)
+        h2.error Oooops!
+        ul.error
+          each error in errors
+            li #{ucfirst(error.path)} is required
       p
         label(for='first_name') First Name
         input#first_name(type='text', name="first_name")

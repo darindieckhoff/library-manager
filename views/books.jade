@@ -8,7 +8,7 @@ block content
 
     p
       | Filters 
-      a(href='/book/all') All
+      a(href='/book/page/1') All
       |  
       a(href='/book/overdue') Overdue
       |  
@@ -29,3 +29,9 @@ block content
             td #{book.author}
             td #{book.genre}
             td #{book.first_published}
+
+    .pagination 
+      ul
+        - for (var i = 1; i < (pages + 1); i++) 
+          li 
+            a(href='/book/page/' + i) #{i}

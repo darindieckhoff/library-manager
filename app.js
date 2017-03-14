@@ -11,6 +11,13 @@ var loans = require('./routes/loans');
 var patrons = require('./routes/patrons');
 
 var app = express();
+app.locals.moment = require('moment');
+app.locals.ucfirst = function(value) {
+  if (value.includes('_')) {
+    value = value.replace('_', ' ');
+  }
+  return value.charAt(0).toUpperCase() + value.slice(1);
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

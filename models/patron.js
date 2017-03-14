@@ -2,12 +2,12 @@
 module.exports = function(sequelize, DataTypes) {
   var Patron = sequelize.define('Patron', {
     id: {type: DataTypes.INTEGER, 'primaryKey': true },
-    first_name: DataTypes.STRING,
-    last_name: DataTypes.STRING,
-    address: DataTypes.STRING,
-    email: DataTypes.STRING,
-    library_id: DataTypes.STRING,
-    zip_code: DataTypes.INTEGER
+    first_name: {type: DataTypes.STRING, validate: {notEmpty: true}},
+    last_name: {type: DataTypes.STRING, validate: {notEmpty: true}},
+    address: {type: DataTypes.STRING, validate: {notEmpty: true}},
+    email: {type: DataTypes.STRING, validate: {notEmpty: true, isEmail: true}},
+    library_id: {type: DataTypes.STRING, validate: {notEmpty: true}},
+    zip_code: {type: DataTypes.INTEGER, validate: {notEmpty: true}},
   }, 
   {
     timestamps: false,

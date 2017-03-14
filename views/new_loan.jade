@@ -3,24 +3,22 @@ extends layout
 block content
 
     h1 New Loan
-    form( id="newLoan" action='/loan/new', method='post')
+    form(id="newLoan", action='/loan/new', method='post')
       p
         label(for='book_id') Book
         select#book_id(name='book_id')
-          for book in books
+          for book in data.books
             option(value=book.id) #{book.title}
       p
         label(for='patron_id') Patron
         select#patron_id(name='patron_id')
-          option(value='1') Andrew Chalkley
-          option(value='2') Dave McFarland
-          option(value='3') Alena Holligan
-          option(value='4') Michael Poley
+          for patron in data.patrons
+            option(value=patron.id) #{patron.first_name} #{patron.last_name}
       p
         label(for='loaned_on') Loaned on:
-        input#loaned_on(type='text', value='2016-5-22', name="loaned_on")
+        input#loaned_on(type='text', value=moment(Date.now()).format('YYYY-MM-DD'), name="loaned_on")
       p
         label(for='return_by') Return by:
-        input#return_by(type='text', value='2016-5-29', name="return_by")
+        input#return_by(type='text', value=moment(Date.now()).add(7,'days').format('YYYY-MM-DD'), name="return_by")
       p
         input(type='submit', value='Create New Loan')

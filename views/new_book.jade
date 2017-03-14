@@ -4,6 +4,11 @@ block content
 
     h1 New Book
     form(id="newBook", action="/book/new", method="post")
+      if (errors)
+        h2.error Oooops!
+        ul.error
+          each error in errors
+            li #{ucfirst(error.path)} is required
       p
         label(for='title') Title
         input#title(type='text', name="title")
