@@ -1,5 +1,15 @@
 'use strict';
 
+/*
+ * /book/page/#      - GET  | lists all books(paginated)
+ * /book/overdue     - GET  | lists all overdue books
+ * /book/checked     - GET  | lists all cheked out books
+ * /book/:id         - GET  | details of an individual book
+ * /book/:id         - POST | updates details of an individual book
+ * /book/new         - GET  | empty form for adding a new book
+ * /book/new         - POST | creates a new book and handles validation errors
+ */
+
 var express = require('express');
 var router = express.Router();
 var Book = require('../models').Book;
@@ -10,6 +20,7 @@ var Patron = require('../models').Patron;
 router.get('/page/:id', function(req, res, next) {
   Book.findAll({
   }).then(function(allBooks){
+    //paginate books 5 per page
     var pages = Math.ceil(allBooks.length/5);
     if (req.params.id === 1) {
       Book.findAll({
@@ -19,7 +30,6 @@ router.get('/page/:id', function(req, res, next) {
         res.render('books', {title: 'Books', books: books, pages:pages});
       })
     } else {
-      (req.params.id * 5)
       Book.findAll({
         order: 'id',
         offset: ((req.params.id * 5)-5),
@@ -31,35 +41,40 @@ router.get('/page/:id', function(req, res, next) {
   });
 });
 
+/* GET books based on chosen column and search input. */
+router.get('/search/', function(req, res, next) {
+  var searchColumn = req.query.type.toLowerCase();
+  var userInput = req.query.search.toLowerCase();
+  if (searchColumn === 'first_published') {
+    userInput = parseInt(userInput);
+  }
+  Book.findAll({
+    where: {
+        [searchColumn]: {
+          $like: '%' + userInput + '%'
+        }
+    }
+  }).then(function(books){
+    res.render('books', {title: 'Books', books: books, searchColumn: searchColumn, userInput: userInput});
+  });
+})
 
-/*New book. */
+
+/* Loads new book template and updates to db */
 router.route('/new')
   .get(function(req, res, next) {
     res.render('new_book', {title: 'New Book'});
   })
   .post(function(req, res, next){
-    Book.findOne({
-      attributes: ['id'],
-      order: 'id DESC',
-      limit: 1
-    }).then(function(book){
-      console.log(book.id);
-      Book.create({
-        id: book.id + 1,
-        title: req.body.title,
-        author: req.body.author,
-        genre: req.body.genre,
-        first_published: req.body.first_published
-      }).then(function() {
-        res.redirect('/book/all');
+    Book.create(req.body)
+      .then(function() {
+        res.redirect('/book/page/1');
       }).catch(function(err){
         res.render('new_book', {title: 'New Book', errors: err.errors});
       });
-    }).catch(function(err){
-      console.log(err);
     });
-  });
 
+/* Loads overdue books based on return_by date */
 router.get('/overdue', function(req, res, next) {
   Book.findAll({
     include: [
@@ -79,6 +94,7 @@ router.get('/overdue', function(req, res, next) {
   });
 });
 
+/* Loads overdue books based on loaned_on and not been returned */
 router.get('/checked', function(req, res, next) {
   Book.findAll({
     include: [
@@ -98,6 +114,7 @@ router.get('/checked', function(req, res, next) {
   });
 });
 
+/* Loads book detail based on book ID and updates any user changes */
 router.route('/:id')
   .get(function(req, res, next) {
     Book.find({
@@ -119,7 +136,7 @@ router.route('/:id')
       .then(function(book){
         book.update(req.body)
           .then(function(){
-            res.redirect('/book/all');
+            res.redirect('/book/page/1');
           }).catch(function(err){
             res.render('book_detail', {title: 'Book Detail', errors: err.errors});
           });

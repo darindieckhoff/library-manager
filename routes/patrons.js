@@ -1,5 +1,13 @@
 'use strict';
 
+/*
+ * /patron/page/#      - GET  | lists all patrons(paginated)
+ * /patron/:id         - GET  | details of an individual patron
+ * /patron/:id         - POST | updates details of an individual patron
+ * /patron/new         - GET  | empty form for adding a new patron
+ * /patron/new         - POST | creates a new patron and handles validation errors
+ */
+
 var express = require('express');
 var router = express.Router();
 var Patron = require('../models').Patron;
@@ -7,40 +15,63 @@ var Loan = require('../models').Loan;
 var Book = require('../models').Book;
 
 /* GET patron listing. */
-router.get('/all', function(req, res, next) {
+router.get('/page/:id', function(req, res, next) {
   Patron.findAll({
-  }).then(function(patrons){
-    res.render('patrons', {title: 'Patrons', patrons: patrons});
+  }).then(function(allPatrons){
+    //paginate patrons 5 per page
+    var pages = Math.ceil(allPatrons.length/5);
+    if (req.params.id === 1) {
+      Patron.findAll({
+        order: 'id',
+        limit: 5
+      }).then(function(patrons){
+        res.render('patrons', {title: 'Patrons', patrons: patrons, pages:pages});
+      });
+    } else {
+      Patron.findAll({
+        order: 'id',
+        offset: ((req.params.id * 5)-5),
+        limit: 5
+      }).then(function(patrons){
+        res.render('patrons', {title: 'Patrons', patrons: patrons, pages:pages});
+      });
+    }
   });
 });
 
-/* GET new loan. */
+
+/* GET patrons based on chosen column and search input. */
+router.get('/search/', function(req, res, next) {
+  var searchColumn = req.query.type.toLowerCase();
+  var userInput = req.query.search.toLowerCase();
+  if (searchColumn === 'zip_code') {
+    userInput = parseInt(userInput);
+  }
+  Patron.findAll({
+    where: {
+        [searchColumn]: {
+          $like: '%' + userInput + '%'
+        }
+    }
+  }).then(function(patrons){
+    res.render('patrons', {title: 'Patrons', patrons: patrons, searchColumn: searchColumn, userInput: userInput});
+  });
+})
+
+/* Loads new loan template */
 router.get('/new', function(req, res, next) {
   res.render('new_patron', {title: 'New Patron'});
 });
 
+/* Posts new patron data to db */
 router.post('/new', function(req, res, next){
-  Patron.findOne({
-    order: 'id DESC',
-    limit: 1
-  }).then(function(patron){
-    Patron.create({
-      id: patron.id + 1,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      address: req.body.address,
-      email: req.body.email,
-      library_id: req.body.library_id,
-      zip_code: req.body.zip_code
-    }).then(function() {
-      res.redirect('/patron/all');
+  Patron.create(req.body)
+    .then(function() {
+      res.redirect('/patron/page/1');
     }).catch(function(err){
       res.render('new_patron', {title: 'New Patron', errors: err.errors});
     });
-  }).catch(function(err){
-    console.log(err);
   });
-});
 
 /* GET patron details. Update patron details with user input. */
 router.route('/:id')
@@ -67,7 +98,7 @@ router.route('/:id')
           patron.update(req.body)
         })
         .then(function(){
-          res.redirect('/patron/all');
+          res.redirect('/patron/page/1');
         });
   });
 

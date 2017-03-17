@@ -1,3 +1,16 @@
+/**----------------------------------------------------------------------
+ * @author:  Darin Dieckhoff
+ * Date:    March 16, 2017
+ *
+ * Project Info:
+ * You've been tasked with creating a library management system for a small library. 
+ * The librarian has been using a simple sqlite database and has been entering data in manually. 
+ * The librarian wants a more intuitive way to handle the library's books, patrons and loans.
+ * You'll be given static HTML designs, a set of requirements and the existing SQLite database. 
+ * You'll be required to implement a dynamic website in Express and a SQL ORM, Sequelize.
+
+ */
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -11,7 +24,9 @@ var loans = require('./routes/loans');
 var patrons = require('./routes/patrons');
 
 var app = express();
+//momentjs for date formatting
 app.locals.moment = require('moment');
+//local function for capitalizing first letter and removing underscore from column names
 app.locals.ucfirst = function(value) {
   if (value.includes('_')) {
     value = value.replace('_', ' ');

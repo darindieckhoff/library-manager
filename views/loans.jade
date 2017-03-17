@@ -6,13 +6,7 @@ block content
     p
       a.button(href='/loan/new') Create New Loan
 
-    p
-      | Filters 
-      a(href='/loan/all') All
-      |  
-      a(href='/loan/overdue') Overdue
-      |  
-      a(href='/loan/checked') Checked Out
+    include ./partials/_filters.jade
 
     table
       thead
@@ -36,4 +30,6 @@ block content
             if (!loan.returned_on)
               td
                 a.button(href='/loan/' + loan.id) Return Book
+
+    include ./partials/_pagination.jade
           

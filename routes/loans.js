@@ -1,5 +1,15 @@
 'use strict';
 
+/*
+ * /loan/page/#      - GET  | lists all books(paginated)
+ * /loan/overdue     - GET  | lists all overdue loans
+ * /loan/checked     - GET  | lists all checked out loans
+ * /loan/:id         - GET  | details of an individual loan
+ * /loan/:id         - POST | updates details of an individual bloan
+ * /loan/new         - GET  | empty form for adding a new loan
+ * /loan/new         - POST | creates a new loan and handles validation errors
+ */
+
 var express = require('express');
 var router = express.Router();
 var moment = require('moment');
@@ -7,21 +17,50 @@ var Loan = require('../models').Loan;
 var Patron = require('../models').Patron;
 var Book = require('../models').Book;
 
-
-/* GET loan listing. */
-router.get('/all', function(req, res, next) {
+/* GET book listing. */
+router.get('/page/:id', function(req, res, next) {
   Loan.findAll({
-    include: [{model: Patron}, {model: Book}]
-  }).then(function(loans) {
-    res.render('loans', {title: 'Loans', loans: loans});
+  }).then(function(allLoans){
+    //paginate books 5 per page
+    var pages = Math.ceil(allLoans.length/5);
+    if (req.params.id === 1) {
+      Loan.findAll({
+        order: 'Loan.id',
+        limit: 5,
+        include: [{
+          model: Patron, 
+          attributes: ['id','first_name', 'last_name']}, 
+          {
+            model: Book, 
+            attributes: ['id','title']
+        }]
+      }).then(function(loans){
+        res.render('loans', {title: 'Loans', loans: loans, pages:pages});
+      })
+    } else {
+      Loan.findAll({
+        order: 'Loan.id',
+        offset: ((req.params.id * 5)-5),
+        limit: 5,
+        include: [{
+          model: Patron, 
+          attributes: ['id', 'first_name', 'last_name']
+        }, 
+        {model: Book, 
+          attributes: ['id', 'title']
+        }]
+      }).then(function(loans){
+        res.render('loans', {title: 'Loans', loans: loans, pages:pages});
+      })
+    }
   });
 });
 
+/* Loads new loan template and posts data to db */
 router.route('/new')
   .get(function(req, res, next) {
     Book.findAll({
       attributes: ['id', 'title'],
-      where: { } 
     }).then(function(bookData){
       Patron.findAll({
         attributes: ['id', 'first_name', 'last_name']
@@ -35,25 +74,15 @@ router.route('/new')
     })
   })
   .post(function(req, res, next){
-    Loan.findOne({
-      attributes: ['id'],
-      order: 'id DESC',
-      limit: 1
-    }).then(function(loan){
-      Loan.create({
-        id: loan.id + 1,
-        book_id: req.body.book_id,
-        patron_id: req.body.patron_id,
-        loaned_on: req.body.loaned_on,
-        return_by: req.body.return_by
+    Loan.create(req.body)
+      .then(function() {
+        res.redirect('/loan/page/1');
+      }).catch(function(err){
+        console.log(err);
       });
-    }).then(function() {
-      res.redirect('/loan/all');
-    }).catch(function(err){
-      console.log(err);
-    });
   });
 
+/* Loads overdue loans based on return_by date */
 router.get('/overdue', function(req, res, next) {
   Loan.findAll({
     where: {
@@ -70,7 +99,7 @@ router.get('/overdue', function(req, res, next) {
   });
 });
 
-
+/* Loads overdue loans based on loaned_on and not been returned */
 router.get('/checked', function(req, res, next) {
   Loan.findAll({
     where: {
@@ -87,6 +116,7 @@ router.get('/checked', function(req, res, next) {
   });
 });
 
+/* Loads loan detail based on loan ID and updates any user changes */
 router.route('/:id')
   .get(function(req, res, next) {
     Loan.find({
@@ -108,7 +138,7 @@ router.route('/:id')
         console.log(req.body.returned_on);
       })
       .then(function(){
-      res.redirect('/loan/all');
+      res.redirect('/loan/page/1');
       });
   });
 

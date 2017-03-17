@@ -5,6 +5,21 @@ block content
     h1 Patrons
     p
       a.button(href='/patron/new') Create New Patron
+
+    form.search(id="bookSearch", action="../search/", method="get")
+      label(for='search_type') Search By:
+      select#search_type(name='type')
+        option(value='first_name') First Name
+        option(value='last_name') Last Name
+        option(value='email') Email
+        option(value='library_id') Library ID
+        option(value='zip_code') Zip Code
+      |         
+      label(for='search')
+      input#search(type='text', name='search' placeholder='Search')
+      |                  
+      input#submit(type='submit', value='Search')    
+      
     table
       thead
         tr
@@ -14,6 +29,9 @@ block content
           th Library ID
           th Zip
       tbody
+        if (patrons < 1)
+          td 
+            strong #{ucfirst(searchColumn)} of '#{userInput}' not found! 
         each patron in patrons
           tr
             td
@@ -23,3 +41,5 @@ block content
             td #{patron.library_id}
             td #{patron.zip_code}
         
+    include ./partials/_pagination.jade
+     

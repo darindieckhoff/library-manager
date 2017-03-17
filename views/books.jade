@@ -6,13 +6,20 @@ block content
     p
       a.button(href='/book/new') Create New Book
 
-    p
-      | Filters 
-      a(href='/book/page/1') All
-      |  
-      a(href='/book/overdue') Overdue
-      |  
-      a(href='/book/checked') Checked Out
+    form.search(id="bookSearch", action="../search/", method="get")
+      label(for='search_type') Search By:
+      select#search_type(name='type')
+        option(value='title') Title
+        option(value='author') Author
+        option(value='genre') Genre
+        option(value='first_published') Year Release
+      |         
+      label(for='search')
+      input#search(type='text', name='search' placeholder='Search')
+      |                  
+      input#submit(type='submit', value='Search')
+
+    include ./partials/_filters.jade
 
     table
       thead
@@ -22,6 +29,9 @@ block content
           th Genre
           th Year Released      
       tbody
+        if (books < 1)
+          td 
+            strong #{ucfirst(searchColumn)} of '#{userInput}' not found!
         each book in books
           tr
             td
@@ -30,8 +40,4 @@ block content
             td #{book.genre}
             td #{book.first_published}
 
-    .pagination 
-      ul
-        - for (var i = 1; i < (pages + 1); i++) 
-          li 
-            a(href='/book/page/' + i) #{i}
+    include ./partials/_pagination.jade

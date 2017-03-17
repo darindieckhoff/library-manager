@@ -4,6 +4,11 @@ block content
 
     h1 New Loan
     form(id="newLoan", action='/loan/new', method='post')
+      if (errors)
+        h2.error Oooops!
+        ul.error
+          each error in errors
+            li #{ucfirst(error.path)} is required
       p
         label(for='book_id') Book
         select#book_id(name='book_id')

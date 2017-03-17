@@ -115,3 +115,36 @@ input[type=text], select {
       background-color: #4ba6c3;
       color: black;
     }
+
+.search{
+  margin: 30px 0 0 0;
+}
+
+  .search label{
+    font-weight: bold;
+    min-width: 20px;
+    display: inline-block;
+  }
+
+  .search select{
+    min-height: 32px;
+  font-size: 14px;
+    font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+    border-radius: 4px;
+    border: 2px solid #eaeaea;
+  }
+
+  .search input[type='text']{
+    min-height: 30px;
+    padding: 0px;
+    margin-left: 0px;
+    font-size: 14px;
+    font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+    border: 2px solid #eaeaea;
+    border-radius: 4px;
+  }
+
+  .search input[type='submit']{
+  padding: 8px;
+  margin-left: 10px;
+}

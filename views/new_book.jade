@@ -9,6 +9,9 @@ block content
         ul.error
           each error in errors
             li #{ucfirst(error.path)} is required
+      if (book < 1)
+        h2.error Oooops!
+          h3.error Title already exists!
       p
         label(for='title') Title
         input#title(type='text', name="title")
