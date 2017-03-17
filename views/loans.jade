@@ -6,7 +6,13 @@ block content
     p
       a.button(href='/loan/new') Create New Loan
 
-    include ./partials/_filters.jade
+    p
+    | Filters 
+    a(href='/loan/page/1') All
+    |  
+    a(href='/loan/overdue') Overdue
+    |  
+    a(href='/loan/checked') Checked Out
 
     table
       thead

@@ -19,7 +19,13 @@ block content
       |                  
       input#submit(type='submit', value='Search')
 
-    include ./partials/_filters.jade
+    p
+    | Filters 
+    a(href='/book/page/1') All
+    |  
+    a(href='/book/overdue') Overdue
+    |  
+    a(href='/book/checked') Checked Out
 
     table
       thead
